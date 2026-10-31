@@ -5,6 +5,7 @@ import SignInPage from "./pages/SignInPage"
 import SignUpPage from "./pages/SignUp"
 import DashboardPage from "./pages/DashboardPage"
 import PricingPage from "./pages/PricingPage"
+import Layout from "./components/Layout"
 
 function ProtectedRoute({children}){
   return <>
@@ -17,7 +18,7 @@ function ProtectedRoute({children}){
 
 function App() {
     return <Routes>
-        <Route path="/">
+        <Route path="/" element={<Layout/>}>
             <Route index element={<HomePage/>}/>
             <Route path={"sign-in/*"} element={<SignInPage/>}/>
             <Route path={"sign-up/*"} element={<SignUpPage/>}/>
