@@ -1,5 +1,5 @@
 import os
-from os import load_dotenv
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -15,4 +15,4 @@ class Config:
     FREE_TIER_MEMBERSHIP_LIMIT: int = 2
     PRO_TIER_MEMBERSHIP_LIMIT = 0
 
-setting = Config()
+settings = Config()
