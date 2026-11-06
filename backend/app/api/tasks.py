@@ -2,21 +2,21 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from app.core.database import get_db
-from app.core.auth import AuthUser, get_current_user, require_view, require_create, require_delete, require_edit
+from app.core.auth import AuthUser, get_current_user, require_permission
 from app.models.task import Task
-from app.schemas.task import TaskCreate, TaskUpdate, TaskStatusUpdate, TaskResponse
+from app.schemas.task import TaskCreate, TaskUpdate, RunStatusUpdate, TaskResponse
 
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
 
 @router.get("", response_model=List[TaskResponse])
-def list_tasks(user: AuthUser = Depends(require_view), db: Session = Depends(get_db)):
+def list_tasks(user: AuthUser = Depends(require_permission("org:tasks:view")), db: Session = Depends(get_db)):
     tasks = db.query(Task).filter(Task.org_id == user.org_id).all()
     return tasks
 
 @router.post("", response_model=TaskResponse)
 def create_task(
     task_data: TaskCreate, 
-    user: AuthUser = Depends(require_create), 
+    user: AuthUser = Depends(require_permission("org:tasks:create")), 
     db: Session = Depends(get_db)
 ):
     task = Task(
@@ -35,7 +35,7 @@ def create_task(
 @router.get("/{task_id}", response_model=TaskResponse)
 def get_task(
     task_id: str, 
-    user: AuthUser = Depends(require_view), 
+    user: AuthUser = Depends(require_permission("org:tasks:view")), 
     db: Session = Depends(get_db)
 ):
     task = db.query(Task).filter(Task.id == task_id, Task.org_id == user.org_id).first()
@@ -50,7 +50,7 @@ def get_task(
 def update_task(
     task_id: str, 
     task_data: TaskUpdate,
-    user: AuthUser = Depends(require_edit), 
+    user: AuthUser = Depends(require_permission("org:tasks:edit")), 
     db: Session = Depends(get_db)
 ):
     task = db.query(Task).filter(Task.id == task_id, Task.org_id == user.org_id).first()
@@ -73,7 +73,7 @@ def update_task(
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_task(
     task_id: str, 
-    user: AuthUser = Depends(require_delete), 
+    user: AuthUser = Depends(require_permission("org:tasks:delete")), 
     db: Session = Depends(get_db)
 ):
     task = db.query(Task).filter(Task.id == task_id, Task.org_id == user.org_id).first()

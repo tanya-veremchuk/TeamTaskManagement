@@ -29,7 +29,7 @@ function Layout() {
                             afterCreateOrganizationUrl={"dashboard"}
                             afterSelectOrganizationUrl={"dashboard"}
                             createOrganizationMode={"modal"}
-                            apperance={{
+                            appearance={{
                                 elements: {
                                     userPreviewMainIdentifierText__personalWorkspace: {color: "white"},
                                     organizationPreviewMainIdentifier__organizationSwitcherTrigger: {color: "white"}

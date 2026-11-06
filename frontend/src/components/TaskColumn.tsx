@@ -1,4 +1,5 @@
 import TaskCard from "./TaskCard";
+import type { Task, TaskStatus } from '../types'
 
 const STATUS_LABELS = {
     pending: "To Do",
@@ -6,7 +7,14 @@ const STATUS_LABELS = {
     completed: "Done"
 }
 
-function TaskColumn({status, tasks, onEdit, onDelete}) {
+interface TaskColumnProps {
+  status: TaskStatus
+  tasks: Task[]
+  onEdit: ((task: Task) => void) | null
+  onDelete: ((taskId: string) => void) | null
+}
+
+function TaskColumn({status, tasks, onEdit, onDelete}: TaskColumnProps) {
     return <div className={"kanban-column"}>
         <div className={`kanban-column-header kanban-column-header-${status}`}>
             <h3 className={"kanban-column-title"}>{STATUS_LABELS[status]}</h3>

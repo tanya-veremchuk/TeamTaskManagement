@@ -1,18 +1,15 @@
-import os
-from dotenv import load_dotenv
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-load_dotenv()
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-class Config:
-    CLERK_SECRET_KEY: str = os.getenv("CLERK_SECRET_KEY", "")
-    CLERK_PUBLISHABLE_KEY: str = os.getenv("CLERK_PUBLISHABLE_KEY", "")
-    CLERK_WEBHOOK_SECRET: str = os.getenv("CLERK_WEBHOOK_SECRET", "")
-    CLERK_JWKS_URL: str = os.getenv("CLERK_JWKS_URL", "")
+    CLERK_SECRET_KEY: str
+    CLERK_PUBLISHABLE_KEY: str
+    CLERK_WEBHOOK_SECRET: str
+    CLERK_JWKS_URL: str
 
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "")
-    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "")
+    DATABASE_URL: str
+    REDIS_URL: str = "redis://localhost:6379/0"
+    FRONTEND_URL: str
 
-    FREE_TIER_MEMBERSHIP_LIMIT: int = 2
-    PRO_TIER_MEMBERSHIP_LIMIT = 0
-
-settings = Config()
+settings = Settings()

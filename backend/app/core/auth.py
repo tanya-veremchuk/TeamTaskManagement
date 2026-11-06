@@ -36,7 +36,7 @@ def convert_to_httpx_request(fastapi_request: Request) -> httpx.Request:
         headers=dict(fastapi_request.headers)
     )
 
-async def get_current_user(request: Request) -> AuthUser:
+def get_current_user(request: Request) -> AuthUser:
     httpx_request = convert_to_httpx_request(request)
 
     request_state = clerk.authenticate_request(
@@ -60,38 +60,9 @@ async def get_current_user(request: Request) -> AuthUser:
 
     return AuthUser(user_id=user_id, org_id=org_id, org_permissions=org_permissions)
 
-def require_view(user: AuthUser = Depends(get_current_user)) -> AuthUser:
-    if not user.can_view:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="View permission required"
-        )
-    
-    return user 
-
-def require_create(user: AuthUser = Depends(get_current_user)) -> AuthUser:
-    if not user.can_create:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Create permission required"
-        )
-    
-    return user
-
-def require_delete(user: AuthUser = Depends(get_current_user)) -> AuthUser:
-    if not user.can_delete:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Delete permission required"
-        )
-    
-    return user
-
-def require_edit(user: AuthUser = Depends(get_current_user)) -> AuthUser:
-    if not user.can_edit:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Edit permission required"
-        )
-
-    return user
+def require_permission(permission: str):
+    def checker(user: AuthUser = Depends(get_current_user)) -> AuthUser:
+        if not user.has_permission(permission):
+            raise HTTPException(status.HTTP_403_FORBIDDEN, f"Missing {permission}")
+        return user
+    return checker

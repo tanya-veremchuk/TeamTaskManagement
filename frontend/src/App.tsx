@@ -6,8 +6,9 @@ import SignUpPage from "./pages/SignUp"
 import DashboardPage from "./pages/DashboardPage"
 import PricingPage from "./pages/PricingPage"
 import Layout from "./components/Layout"
+import { ReactNode } from "react"
 
-function ProtectedRoute({children}){
+function ProtectedRoute({children}: {children: ReactNode}){
   return <>
       <SignedIn>{children}</SignedIn>
       <SignedOut>
