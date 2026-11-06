@@ -1,15 +1,24 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
-from app.core.database import engine, Base
-from app.api import tasks
 
-Base.metadata.create_all(bind=engine)
+from app.api import tasks
+from app.core.config import settings
+from app.core.database import Base, engine
+from app.models import task 
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
 
 app = FastAPI(
-    title="Task Board API",
-    description="B2B Task Board App",
-    version="1.0.0"
+    title="TaskFlow API",
+    version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -20,4 +29,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(tasks.router)
+
+@app.get("/health", tags=["system"])
+def health():
+    return {"status": "ok"}
+
+
+app.include_router(tasks.router, prefix="/api")

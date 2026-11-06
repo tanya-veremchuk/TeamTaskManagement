@@ -6,7 +6,7 @@ from app.core.auth import AuthUser, get_current_user, require_permission
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate, RunStatusUpdate, TaskResponse
 
-router = APIRouter(prefix="/api/tasks", tags=["tasks"])
+router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 @router.get("", response_model=List[TaskResponse])
 def list_tasks(user: AuthUser = Depends(require_permission("org:tasks:view")), db: Session = Depends(get_db)):
